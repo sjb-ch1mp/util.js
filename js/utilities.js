@@ -10,6 +10,14 @@ function renderUtilities(){
             utilityFunction
         )
         */  
+        new Utility(
+            "Utility Name",
+            [
+                "Description of what utility does...",
+                "...and instructions for how to use it."
+            ],
+            utilityFunction
+        )
     ];
 
     for(let i in utilities){
@@ -25,10 +33,16 @@ function renderUtilities(){
     When a function is defined below - it must appear in the Utility object declaration in the
     renderUtilities() function above. 
 
-    A utility function should be passed the name of the utility so that it can be accessed within
-    the scope of the function. For example: 
+    A utility function should be passed the parameters 'file' and 'text'.
+    
+    For example: 
 
-    function utilityFunction(utilityName){
-        //function body...
+    function utilityFunction(file, text){    
+        console.log(file.content);
+        console.log(text);
     }
    =================== */
+function utilityFunction(file, text){
+    console.log(file.content);
+    console.log(text);
+}

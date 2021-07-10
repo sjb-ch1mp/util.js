@@ -9,9 +9,9 @@ class Utility{
         consoleLog(this.description, "block");
     }
     executeUtility = () => {
-        fileInput = getFileInput();
-        textInput = getTextInput();
-        this.execute(this.name);
+        consoleLog("Executing utility \"" + this.name + "\"", "head");
+        this.execute(getFileInput(), getTextInput());
+        consoleLog("Done.");
     }
     render = () => {
         const utilities = document.getElementById('utilities');
@@ -60,29 +60,39 @@ function consoleLog(message, type){
 
 function getFileInput(){
     if(fileInput == null){
-        consoleLog("No file has been loaded. Ignoring file input.", "err");
-        return null;
+        consoleLog("No file has been loaded. Ignoring file input.", "");
+        return {"name":"","content":"","type":"","processed":false};
     }
 
-    if(fileInput.type === "text/csv" || (fileInput.type === "application/vnd.ms-excel" && fileInput.name.endsWith(".csv"))){
-        fileInput.content = processCSV(fileInput.content);
-    }else if(fileInput.type === "text/plain"){
-        fileInput.content = processTXT(fileInput.content);
+    if(!fileInput.processed){
+        if(fileInput.type === "text/csv" || (fileInput.type === "application/vnd.ms-excel" && fileInput.name.endsWith(".csv"))){
+            fileInput.content = processCSV(fileInput.content);
+            fileInput.processed = true;
+        }else if(fileInput.type === "text/plain"){
+            fileInput.content = processTXT(fileInput.content);
+            fileInput.processed = true;
+        }
     }
 
     return fileInput;
 }
 
 function processCSV(content){
-    let entities = [];
-    let rows = content.split(/\r?\n/);
-    let attributes = parseCSVRow(rows[0]);
-    for(let i=1; i<rows.length; i++){
-        if(rows[i].trim().length > 0){
-            entities.push(new CsvEntity(attributes, parseCSVRow(rows[i])));
+    consoleLog("Processing CSV file.", "");
+    try{
+        let entities = [];
+        let rows = content.split(/\r?\n/);
+        let attributes = parseCSVRow(rows[0]);
+        for(let i=1; i<rows.length; i++){
+            if(rows[i].trim().length > 0){
+                entities.push(new CsvEntity(attributes, parseCSVRow(rows[i])));
+            }
         }
+        return entities;
+    }catch(err){
+        consoleLog("Error parsing CSV file.", "err");
+        consoleLog(err.message, "err");
     }
-    return entities;
 }
 
 function parseCSVRow(row){
@@ -127,12 +137,24 @@ class CsvEntity{
 }
 
 function processTXT(content){
-    return content.split(/\r?\n/);
+    consoleLog("Processing text file.", "");
+    let lines = content.split(/\r?\n/);
+    let cleanLines = [];
+    for(let i in lines){
+        if(lines[i].trim().length > 0){
+            cleanLines.push(lines[i].trim());
+        }
+    }
+    return cleanLines;
 }
 
 function getTextInput(){
     let text = document.getElementById('text_input').value;
-    textInput = text; //save text in case something goes wrong
+    if(text.trim().length === 0){
+        consoleLog("No text has been entered. Ignoring text input.", "");
+        return "";
+    }
+    textInput = text;
     return text;
 }
 
@@ -143,10 +165,10 @@ function loadFile(event){
 
     let file = event.target.files[0];
 
-    consoleLog("Loading file \"" + fileName + "\"", "head");
-    consoleLog("File type: " + fileType, "");
+    consoleLog("Loading file \"" + file.name + "\"", "head");
+    consoleLog("File type: " + file.type, "");
 
-    if(!(file.type === "text/csv" || (file.type === "application/vnd.ms-excel" && file.type.endsWith(".csv")) || file.type === "text/plain")){
+    if(file.type !== "text/csv" && !(file.type === "application/vnd.ms-excel" && /\.csv$/.test(file.name)) && file.type !== "text/plain"){
         consoleLog("Sorry. util.js only accepts .txt and .csv files at the moment.", "err");
         return;
     }
@@ -156,7 +178,8 @@ function loadFile(event){
         fileInput = {
             "name": file.name,
             "type": file.type,
-            "content": reader.result
+            "content": reader.result,
+            "processed":false
         };
         consoleLog("Success.", "");
     };
