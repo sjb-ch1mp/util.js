@@ -5,4 +5,5 @@
 ### Author 
 Samuel Brookes ([@sjb-ch1mp](https://github.com/sjb-ch1mp))
 
+### Description
 util.js is for JS coders who just want to have a simple framework where they can save and use little utility scripts that take a file or string, do something to it, and return the results.
