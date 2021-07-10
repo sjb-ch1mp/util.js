@@ -9,15 +9,7 @@ function renderUtilities(){
             ],
             utilityFunction
         )
-        */  
-        new Utility(
-            "Utility Name",
-            [
-                "Description of what utility does...",
-                "...and instructions for how to use it."
-            ],
-            utilityFunction
-        )
+        */
     ];
 
     for(let i in utilities){
@@ -42,7 +34,3 @@ function renderUtilities(){
         console.log(text);
     }
    =================== */
-function utilityFunction(file, text){
-    console.log(file.content);
-    console.log(text);
-}
