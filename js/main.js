@@ -75,15 +75,13 @@ function getFileInput(){
 
 function processCSV(content){
     let entities = [];
-    let rows = content.split(/\r?\n/); console.log(rows);
+    let rows = content.split(/\r?\n/);
     let attributes = parseCSVRow(rows[0]);
     for(let i=1; i<rows.length; i++){
-        if(rows[i].trim().length > 0){console.log(rows[i]);
+        if(rows[i].trim().length > 0){
             entities.push(new CsvEntity(attributes, parseCSVRow(rows[i])));
         }
     }
-    console.log(entities);
-    console.log(entities[0].getAttributes());
     return entities;
 }
 
