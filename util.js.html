@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <script src="js/main.js"></script>
+        <script src="js/ui.js"></script>
+        <script src="js/utilities.js"></script>
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="icon" href="img/favicon.png">
+        <title>util.js</title>
+    </head>
+    <body id="body">
+        <div id="logo_container" class="menu workspace">
+            <img id="logo" src="img/logo.png">
+        </div>
+        <div id="file_input" onclick="document.getElementById('file_input_hidden').click()" class="workspace">
+            File Input...
+            <input id="file_input_hidden" type="file" style="display: none;" onchange=loadFile(event)>
+        </div>
+        <textarea class="menu  workspace" id="text_input" placeholder="Text Input..."></textarea>
+        <div id="utilities" class="workspace"></div>
+        <div id="results" class="workspace"></div>
+        <div id="console" class="workspace"></div>
+        <div id="footer" class="workspace">
+            version 1.0.0 <span style="color: #d82222;">  ||  </span> 
+            written by <a target="_blank" href="https://github.com/sjb-ch1mp">ch1mp</a> <span style="color: #d82222;">  ||  </span> 
+            icons by <a target="_blank" href="https://www.flaticon.com/">flaticon.com</a>
+        </div>
+    </body>
+    <script>
+        window.onresize = fitPanels;
+        window.onload = fitPanels;
+        let fileInput = null;
+        let textInput = null;
+        renderUtilities();
+    </script>
+</html>

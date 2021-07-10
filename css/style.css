@@ -1,0 +1,87 @@
+body{
+    background-color: black;
+    overflow: clip;
+}
+
+a{
+    color: aquamarine;
+}
+
+/* Element by Class */
+.utility_button{
+    border: 0px;
+    border-radius: 5px;
+    background-color: aquamarine;
+    font-family: 'Courier New';
+    font-weight: bold;
+    font-size: medium;
+    color: black;
+    cursor: pointer;
+    text-align: center;
+    padding: 5px;
+    margin: 5px;
+}
+
+.workspace{
+    position: absolute;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+/* Element by ID */
+#file_input{
+    border: 2px aquamarine solid;
+    border-radius: 5px;
+    background-color: black;
+    font-family: 'Courier New';
+    font-size: medium;
+    color: aquamarine;
+    cursor: pointer;
+}
+
+#logo_container{
+    display: flex;
+    justify-content: center;
+}
+
+#utilities{
+    display: flexbox;
+    flex-wrap: wrap;
+    overflow-y: scroll;
+    border: 2px aquamarine solid;
+}
+
+#text_input{
+    resize: none;
+    border: 2px aquamarine solid;
+    background-color: black;
+    border-radius: 5px;
+    color: whitesmoke;
+    font-family: "Courier New";
+    font-size: medium;
+}
+
+#results{
+    background-color: black;
+    color: whitesmoke;
+    border: 2px #00B050 solid;
+    overflow-y: scroll;
+    font-family: "Candara";
+    font-size: x-large;
+}
+
+#console{
+    background-color: black;
+    color: whitesmoke;
+    border: 2px #00B050 solid;
+    overflow-y: scroll;
+    font-family: "Courier New";
+    font-size: small;
+}
+
+#footer{
+    font-family: "Courier New";
+    text-align: center;
+    font-size: small;
+    color: aquamarine;
+}
