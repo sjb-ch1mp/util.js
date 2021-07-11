@@ -31,6 +31,12 @@ function fitPanels(){
     UTILITIES.style.width = dim.UTILITIES_WIDTH;
     UTILITIES.style.height = dim.UTILITIES_HEIGHT;
 
+    let DOWNLOAD = document.getElementById('download');
+    DOWNLOAD.style.top = dim.DOWNLOAD_TOP;
+    DOWNLOAD.style.left = 5;
+    DOWNLOAD.style.width = dim.DOWNLOAD_WIDTH;
+    DOWNLOAD.style.height = dim.DOWNLOAD_HEIGHT;
+
     let RESULTS = document.getElementById('results');
     RESULTS.style.top = 5;
     RESULTS.style.left = dim.RESULTS_LEFT;
@@ -55,25 +61,37 @@ function getCurrentDimensions(){
     let WINDOW_HEIGHT = window.innerHeight - 5;
     let WINDOW_WIDTH = window.innerWidth - 5;
     let MENU_WIDTH = 0.20 * window.innerWidth;
+    
     let LOGO_WIDTH = MENU_WIDTH;
     let LOGO_HEIGHT = LOGO_WIDTH / 4;
     let LOGO_CONTAINER_HEIGHT = LOGO_HEIGHT;
+    
     let FILE_INPUT_TOP = LOGO_CONTAINER_HEIGHT + 10;
     let FILE_INPUT_HEIGHT = (0.05 * window.innerHeight) - 5;
     let FILE_INPUT_WIDTH = MENU_WIDTH - 15;
+    
     let TEXT_INPUT_HEIGHT = 0.25 * window.innerHeight;
     let TEXT_INPUT_WIDTH = FILE_INPUT_WIDTH;
     let TEXT_INPUT_TOP = LOGO_CONTAINER_HEIGHT + FILE_INPUT_HEIGHT + 30;
-    let RESULTS_HEIGHT = (0.80 * window.innerHeight) - 20;
-    let RESULTS_WIDTH = (window.innerWidth - MENU_WIDTH) - 35;
+    
+    let RESULTS_HEIGHT = (0.80 * window.innerHeight) - 25;
+    let RESULTS_WIDTH = (window.innerWidth - MENU_WIDTH) - 40;
     let RESULTS_LEFT = MENU_WIDTH + 15;
+    
     let CONSOLE_HEIGHT = (0.15 * window.innerHeight);
-    let CONSOLE_TOP = RESULTS_HEIGHT + 25;
+    let CONSOLE_TOP = RESULTS_HEIGHT + 30;
     let CONSOLE_LEFT = RESULTS_LEFT;
     let CONSOLE_WIDTH = RESULTS_WIDTH;
+
+    let DOWNLOAD_HEIGHT = FILE_INPUT_HEIGHT;
+    let DOWNLOAD_WIDTH = FILE_INPUT_WIDTH;
+    
     let UTILITIES_TOP = TEXT_INPUT_TOP + TEXT_INPUT_HEIGHT + 20;
-    let UTILITIES_HEIGHT = (CONSOLE_HEIGHT + RESULTS_HEIGHT) - (LOGO_CONTAINER_HEIGHT + FILE_INPUT_HEIGHT + TEXT_INPUT_HEIGHT + 25);
+    let UTILITIES_HEIGHT = (CONSOLE_HEIGHT + RESULTS_HEIGHT) - (LOGO_CONTAINER_HEIGHT + FILE_INPUT_HEIGHT + TEXT_INPUT_HEIGHT + DOWNLOAD_HEIGHT + 40);
     let UTILITIES_WIDTH = MENU_WIDTH - 15;
+
+    let DOWNLOAD_TOP = LOGO_HEIGHT + FILE_INPUT_HEIGHT + TEXT_INPUT_HEIGHT + UTILITIES_HEIGHT + 70;
+    
     let FOOTER_TOP = RESULTS_HEIGHT + CONSOLE_HEIGHT + 50;
     let FOOTER_WIDTH = WINDOW_WIDTH;
     let FOOTER_HEIGHT = (0.05 * window.innerHeight) - 15;
@@ -94,6 +112,9 @@ function getCurrentDimensions(){
         "UTILITIES_HEIGHT":UTILITIES_HEIGHT + "px",
         "UTILITIES_TOP":UTILITIES_TOP + "px",
         "UTILITIES_WIDTH":UTILITIES_WIDTH + "px",
+        "DOWNLOAD_HEIGHT":DOWNLOAD_HEIGHT + "px",
+        "DOWNLOAD_WIDTH":DOWNLOAD_WIDTH + "px",
+        "DOWNLOAD_TOP":DOWNLOAD_TOP + "px",
         "RESULTS_HEIGHT":RESULTS_HEIGHT + "px",
         "RESULTS_WIDTH":RESULTS_WIDTH + "px",
         "RESULTS_LEFT":RESULTS_LEFT + "px",

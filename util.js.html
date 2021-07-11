@@ -13,25 +13,33 @@
         <div id="logo_container" class="menu workspace">
             <img id="logo" src="img/logo.png">
         </div>
-        <div id="file_input" onclick="document.getElementById('file_input_hidden').click()" class="workspace">
-            File Input...
+        <div id="file_input" onclick="document.getElementById('file_input_hidden').click()" class="workspace menu_button">
+            File Input
             <input id="file_input_hidden" type="file" style="display: none;" onchange=loadFile(event)>
         </div>
-        <textarea class="menu  workspace" id="text_input" placeholder="Text Input..."></textarea>
+        <textarea class="menu workspace" id="text_input" placeholder="Text Input"></textarea>
         <div id="utilities" class="workspace"></div>
+        <div id="download" class="workspace menu_button" onclick="downloadResult()">
+            Download Result
+        </div>
         <div id="results" class="workspace"></div>
         <div id="console" class="workspace"></div>
         <div id="footer" class="workspace">
+            <a target="_blank" href="https://github.com/sjb-ch1mp/util.js/blob/master/README.md">readme</a> <span style="color: #d82222;">  ||  </span> 
             version 1.0.0 <span style="color: #d82222;">  ||  </span> 
             written by <a target="_blank" href="https://github.com/sjb-ch1mp">ch1mp</a> <span style="color: #d82222;">  ||  </span> 
             icons by <a target="_blank" href="https://www.flaticon.com/">flaticon.com</a>
         </div>
     </body>
     <script>
+        let FILE = null;
+        let TEXT = null;
+        let RESULT = null;
+
         window.onresize = fitPanels;
         window.onload = fitPanels;
-        let fileInput = null;
-        let textInput = null;
+
+        welcome();
         renderUtilities();
     </script>
 </html>

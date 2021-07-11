@@ -5,13 +5,19 @@ class Utility{
         this.execute = execute;
     }
     showDescription = () => {
-        consoleLog("USAGE: \"" + this.name.toUpperCase() + "\"", "head");
+        consoleLog("Utility: \"" + this.name + "\"", "head");
         consoleLog(this.description, "block");
     }
     executeUtility = () => {
         consoleLog("Executing utility \"" + this.name + "\"", "head");
-        this.execute(getFileInput(), getTextInput());
-        consoleLog("Done.");
+        let result = this.execute(getFileInput(), getTextInput())
+        if(result.isErrorResult){
+            consoleLog("Utility completed with error: " + result.message, "err");
+        }else{
+            RESULT = {"utility":this.name,"result":result};
+            showResult();
+            consoleLog("Utility completed successfully.");
+        }
     }
     render = () => {
         const utilities = document.getElementById('utilities');
@@ -34,9 +40,43 @@ function buildUtilityMenuItem(utility){
     return button;
 }
 
-function showResults(results){
-    let resultPanel = document.getElementById('results');
-    resultPanel.innerText = results;
+class ErrorResult{
+    constructor(message){
+        this.message = message;
+    }
+
+    isErrorResult(){
+        return true;
+    }
+}
+
+function showResult(){
+    if(RESULT != null){
+        let resultPanel = document.getElementById('results');
+        resultPanel.innerText = RESULT.result;
+    }
+}
+
+function downloadResult(){
+    if(RESULT != null){
+        consoleLog("Downloading results as text file.", "head");
+        let fileName = (new Date().toLocaleDateString()) + "_" + RESULT.utility.replace(/\s+/, "-") + ".txt"
+        consoleLog("Filename : " + fileName);
+        let blob = new Blob([RESULT.result], {type: "text/plain"});
+        if(window.navigator.msSaveOrOpenBlob){
+            window.navigator.msSaveOrOpenBlob(blob, fileName);
+        }else{
+            let element = document.createElement('a');
+            element.href = window.URL.createObjectURL(blob);
+            element.download = fileName;
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+        consoleLog("Done.");
+    }else{
+        consoleLog("No results to download.", "err");
+    }
 }
 
 function consoleLog(message, type){
@@ -59,22 +99,22 @@ function consoleLog(message, type){
 }
 
 function getFileInput(){
-    if(fileInput == null){
+    if(FILE == null){
         consoleLog("No file has been loaded. Ignoring file input.", "");
         return {"name":"","content":"","type":"","processed":false};
     }
 
-    if(!fileInput.processed){
-        if(fileInput.type === "text/csv" || (fileInput.type === "application/vnd.ms-excel" && fileInput.name.endsWith(".csv"))){
-            fileInput.content = processCSV(fileInput.content);
-            fileInput.processed = true;
-        }else if(fileInput.type === "text/plain"){
-            fileInput.content = processTXT(fileInput.content);
-            fileInput.processed = true;
+    if(!FILE.processed){
+        if(FILE.type === "text/csv" || (FILE.type === "application/vnd.ms-excel" && FILE.name.endsWith(".csv"))){
+            FILE.content = processCSV(FILE.content);
+            FILE.processed = true;
+        }else if(FILE.type === "text/plain"){
+            FILE.content = processTXT(FILE.content);
+            FILE.processed = true;
         }
     }
 
-    return fileInput;
+    return FILE;
 }
 
 function processCSV(content){
@@ -154,7 +194,7 @@ function getTextInput(){
         consoleLog("No text has been entered. Ignoring text input.", "");
         return "";
     }
-    textInput = text;
+    TEXT = text;
     return text;
 }
 
@@ -175,7 +215,7 @@ function loadFile(event){
 
     let reader = new FileReader();
     reader.onload = () => {
-        fileInput = {
+        FILE = {
             "name": file.name,
             "type": file.type,
             "content": reader.result,
@@ -188,4 +228,9 @@ function loadFile(event){
         consoleLog(reader.error, "err");
     };
     reader.readAsText(file);
+}
+
+function welcome(){
+    consoleLog("Welcome to util.js.", "head");
+    consoleLog("Hold the ALT key while clicking on a utility to show its description and usage notes in this console.");
 }
