@@ -53,7 +53,7 @@ class ErrorResult{
 function showResult(){
     if(RESULT != null){
         let resultPanel = document.getElementById('results');
-        resultPanel.innerText = RESULT.result;
+        resultPanel.value = RESULT.result;
     }
 }
 
