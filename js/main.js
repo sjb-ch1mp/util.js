@@ -271,10 +271,6 @@ function welcome(){
     consoleLog("Hold the ALT key while clicking on a utility to show its description and usage notes in this console.");
 }
 
-function submitUserInput(event){
-    document.getElementById('RESPONSE').innerText = event.target.elements.user_input.value;
-}
-
 function promptUser(query, callback, timeout){
     let promise = new Promise((resolve, reject) => {
         try{
