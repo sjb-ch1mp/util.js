@@ -70,14 +70,17 @@ a{
     color: whitesmoke;
     border: 2px purple solid;
     overflow-y: scroll;
-    font-family: "Candara";
-    font-size: x-large;
+    font-family: "Courier New";
+    font-size: large;
 }
 
 #console{
     background-color: black;
     color: whitesmoke;
-    border: 2px red solid;
+    border-top: 2px red solid;
+    border-left: 2px red solid;
+    border-right: 2px red solid;
+    border-radius: 5px 5px 0px 0px;
     overflow-y: scroll;
     font-family: "Courier New";
     font-size: small;
@@ -88,4 +91,15 @@ a{
     text-align: center;
     font-size: small;
     color: aquamarine;
+}
+
+#user_input{
+    font-family: "Courier New";
+    border-top: 1px red dashed;
+    border-bottom:  2px red solid;
+    border-left:  2px red solid;
+    border-right:  2px red solid;
+    color: white;
+    background-color: black;
+    border-radius: 0px 0px 5px 5px;
 }

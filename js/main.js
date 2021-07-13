@@ -9,21 +9,47 @@ class Utility{
         consoleLog(this.description, "block");
     }
     executeUtility = () => {
+
         consoleLog("Executing utility \"" + this.name + "\"", "head");
-        let result = this.execute(getFileInput(), getTextInput())
-        if(result.isErrorResult){
-            consoleLog("Utility completed with error: " + result.message, "err");
-        }else{
-            RESULT = {"utility":this.name,"result":result};
-            showResult();
-            consoleLog("Utility completed successfully.");
-        }
+
+        let promise = new Promise((resolve, reject) => {    
+            try{
+                let result = this.execute(getFileInput(), getTextInput())
+                if(result.isCallback){
+                    consoleLog(result.query);
+                }else if(result.isErrorResult){
+                    reject(result.message);
+                }else{
+                    resolve({"utility":this.name,"result":result});
+                }
+            }catch(e){
+                reject(e.message);
+            }
+        });
+        
+        promise
+            .then((result) => {
+                RESULT = result;
+                showResult();
+                consoleLog("Utility completed successfully.");
+            })
+            .catch((err) => {
+                consoleLog("Utility completed with error: " + err, "err");
+            });
     }
     render = () => {
         const utilities = document.getElementById('utilities');
         let utilityMenuItem = buildUtilityMenuItem(this);
         utilityMenuItem.classList.add('utility_button');
         utilities.appendChild(utilityMenuItem);
+    }
+}
+
+function renderUtilities(){
+    let utilities = getUtilities();
+
+    for(let i in utilities){
+        utilities[i].render();
     }
 }
 
@@ -46,6 +72,16 @@ class ErrorResult{
     }
 
     isErrorResult(){
+        return true;
+    }
+}
+
+class CallbackResult{
+    constructor(query){
+        this.query = query;
+    }
+
+    isCallback(){
         return true;
     }
 }
@@ -233,4 +269,34 @@ function loadFile(event){
 function welcome(){
     consoleLog("Welcome to util.js.", "head");
     consoleLog("Hold the ALT key while clicking on a utility to show its description and usage notes in this console.");
+}
+
+function submitUserInput(event){
+    document.getElementById('RESPONSE').innerText = event.target.elements.user_input.value;
+}
+
+function promptUser(query, callback, timeout){
+    let promise = new Promise((resolve, reject) => {
+        try{
+            setTimeout(() => {
+                userInput = document.getElementById('user_input').value;
+                document.getElementById('user_input').value = "";
+                resolve(userInput);
+            }, timeout);
+        }catch(err){
+            reject(err.message);
+        }
+    });
+
+    promise.then(
+        (userInput) => {
+            callback(userInput);
+        }
+    ).catch(
+        (err) => {
+            consoleLog("Utility completed with error: " + err, "err");
+        }
+    );
+
+    return new CallbackResult("[" + (timeout/1000) + "s] " + query);
 }

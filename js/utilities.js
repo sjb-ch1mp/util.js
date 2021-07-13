@@ -1,5 +1,5 @@
-function renderUtilities(){
-    let utilities = [
+function getUtilities(){
+    return [
         /* === EXAMPLE ===
         new Utility(
             "Utility Name",
@@ -11,26 +11,22 @@ function renderUtilities(){
         )
         */
        new Utility(
-           "Defang",
+           "[General] Defang",
            [
-               "The defang utility will modify URLs and email addresses so that they will no longer resolve.",
+               "This utility will modify URLs and email addresses so that they will no longer resolve.",
                "To use this utility, simply copy-paste your URLs or emails into the text input and click the utility button."
            ],
            defang
        ),
        new Utility(
-        "Refang",
-        [
-            "The refang utility will modify previously defanged URLs and email addresses so that they can resolve.",
-            "To use this utility, simply copy-paste your defanged URLs or emails into the text input and click the utility button."
-        ],
-        refang
-    )
+            "[General] Refang",
+            [
+                "This utility will modify previously defanged URLs and email addresses so that they can resolve.",
+                "To use this utility, simply copy-paste your defanged URLs or emails into the text input and click the utility button."
+            ],
+            refang
+        )
     ];
-
-    for(let i in utilities){
-        utilities[i].render();
-    }
 }
 
 /* ===================
@@ -44,20 +40,50 @@ function renderUtilities(){
     A utility function should be passed the parameters 'file' and 'text' and should return a 'results' variable.
 
     If a terminal error occurs within the utility function, it should return an ErrorResult object with an error message.
-    
-    For example: 
 
-    function utilityFunction(file, text){    
-        let result = "";
-        console.log(file.content);
-        console.log(text);
-        try{
-            //do something
-        }catch(e){
-            return new ErrorResult(e.message);
+    If you wish to get user input, you must use the promptUser() function and pass the code that will execute after the user input
+    is returned as a callback function. The parameters passed to promptUser are the prompt for the user, the callback function, and the timeout counter in milliseconds.
+    The last statement in a function with user input should be a return statement that returns the results of the promptUser() function. 
+    
+    Example without user input:
+        function utilityFunction(file, text){    
+            let result = "";
+            console.log(file.content);
+            console.log(text);
+            try{
+                //do something
+            }catch(e){
+                return new ErrorResult(e.message);
+            }
+            return result;
         }
-        return result;
-    }
+
+    Example with user input: 
+        == Utility declaration ==
+        new Utility(
+            "[TEST] Test user input",
+            [
+                "Testing user input"
+            ],
+            testUserInput
+        )
+        
+        == utility functions ==
+        function testUserInput(){
+            return promptUser(
+                "Enter anything in the user input text area:",
+                testUserInput__callback,
+                3000
+            );
+        }
+
+        function testUserInput__callback(userInput){
+            if(userInput == null || userInput == undefined || userInput.trim().length === 0){
+                consoleLog("No user input detected! Aborting utility.", "err");
+            }else{
+                consoleLog("You entered the following into the user input: " + userInput);
+            }
+        }    
    =================== */
 function defang(file, text){
     if(text === null || text.trim().length === 0){

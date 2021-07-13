@@ -49,6 +49,12 @@ function fitPanels(){
     CONSOLE.style.width = dim.CONSOLE_WIDTH;
     CONSOLE.style.height = dim.CONSOLE_HEIGHT;
 
+    let USER_INPUT = document.getElementById('user_input');
+    USER_INPUT.style.top = dim.USER_INPUT_TOP;
+    USER_INPUT.style.left = dim.USER_INPUT_LEFT;
+    USER_INPUT.style.height = dim.USER_INPUT_HEIGHT;
+    USER_INPUT.style.width = dim.USER_INPUT_WIDTH;
+
     let FOOTER = document.getElementById('footer');
     FOOTER.style.top = dim.FOOTER_TOP;
     FOOTER.style.left = 5;
@@ -78,23 +84,30 @@ function getCurrentDimensions(){
     let RESULTS_WIDTH = (window.innerWidth - MENU_WIDTH) - 40;
     let RESULTS_LEFT = MENU_WIDTH + 15;
     
-    let CONSOLE_HEIGHT = (0.15 * window.innerHeight);
+    let CONSOLE_HEIGHT = (0.14 * window.innerHeight) - 20;
     let CONSOLE_TOP = RESULTS_HEIGHT + 30;
     let CONSOLE_LEFT = RESULTS_LEFT;
     let CONSOLE_WIDTH = RESULTS_WIDTH;
+
+    let USER_INPUT_HEIGHT = (0.01 * window.innerHeight);
+    let USER_INPUT_WIDTH = CONSOLE_WIDTH;
+    let USER_INPUT_LEFT = RESULTS_LEFT;
+    let USER_INPUT_TOP = RESULTS_HEIGHT + CONSOLE_HEIGHT + 40;
 
     let DOWNLOAD_HEIGHT = FILE_INPUT_HEIGHT;
     let DOWNLOAD_WIDTH = FILE_INPUT_WIDTH;
     
     let UTILITIES_TOP = TEXT_INPUT_TOP + TEXT_INPUT_HEIGHT + 20;
-    let UTILITIES_HEIGHT = (CONSOLE_HEIGHT + RESULTS_HEIGHT) - (LOGO_CONTAINER_HEIGHT + FILE_INPUT_HEIGHT + TEXT_INPUT_HEIGHT + DOWNLOAD_HEIGHT + 40);
+    let UTILITIES_HEIGHT = (CONSOLE_HEIGHT + RESULTS_HEIGHT + USER_INPUT_HEIGHT) - (LOGO_CONTAINER_HEIGHT + FILE_INPUT_HEIGHT + TEXT_INPUT_HEIGHT + DOWNLOAD_HEIGHT + 30);
     let UTILITIES_WIDTH = MENU_WIDTH - 15;
 
     let DOWNLOAD_TOP = LOGO_HEIGHT + FILE_INPUT_HEIGHT + TEXT_INPUT_HEIGHT + UTILITIES_HEIGHT + 70;
     
-    let FOOTER_TOP = RESULTS_HEIGHT + CONSOLE_HEIGHT + 50;
+    let FOOTER_TOP = RESULTS_HEIGHT + CONSOLE_HEIGHT + USER_INPUT_HEIGHT + 70;
     let FOOTER_WIDTH = WINDOW_WIDTH;
     let FOOTER_HEIGHT = (0.05 * window.innerHeight) - 15;
+
+    
 
     return {
         "WINDOW_HEIGHT":WINDOW_HEIGHT + "px",
@@ -125,6 +138,10 @@ function getCurrentDimensions(){
         "UTILITIES_HEIGHT":UTILITIES_HEIGHT + "px",
         "FOOTER_TOP":FOOTER_TOP + "px",
         "FOOTER_WIDTH":FOOTER_WIDTH + "px",
-        "FOOTER_HEIGHT":FOOTER_HEIGHT + "px"
+        "FOOTER_HEIGHT":FOOTER_HEIGHT + "px",
+        "USER_INPUT_HEIGHT":USER_INPUT_HEIGHT + "px",
+        "USER_INPUT_WIDTH":USER_INPUT_WIDTH + "px",
+        "USER_INPUT_TOP":USER_INPUT_TOP + "px",
+        "USER_INPUT_LEFT":USER_INPUT_LEFT + "px"
     };
 }
