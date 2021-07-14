@@ -72,6 +72,7 @@ a{
 }
 
 #results{
+    resize: none;
     background-color: black;
     color: whitesmoke;
     border: 2px purple solid;
