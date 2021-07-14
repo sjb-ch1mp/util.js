@@ -80,7 +80,6 @@ function doPostUtilityCleanUp(){
 
     RESULTS = null;
     TEXT = null;
-    FILE = null;
 }
 
 class ErrorResult{
