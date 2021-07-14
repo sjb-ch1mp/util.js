@@ -41,9 +41,9 @@ function getUtilities(){
 
     If a terminal error occurs within the utility function, it should return an ErrorResult object with an error message.
 
-    If you wish to get user input, you must use the promptUser() function and pass the code that will execute after the user input
-    is returned as a callback function. The parameters passed to promptUser are the prompt for the user, the callback function, and the timeout counter in milliseconds.
-    The last statement in a function with user input should be a return statement that returns the results of the promptUser() function. 
+    If you wish to get user input, you must use the promptUser() function.
+    This function takes three parameters: the utility name (this.name), the prompt for the user, and the callback function.
+    A function that gets user input MUST return the results of the promptUser() function. 
     
     Example without user input:
         function utilityFunction(file, text){    
@@ -82,9 +82,8 @@ function getUtilities(){
                 consoleLog("No user input detected! Aborting utility.", "err");
             }else{
                 consoleLog("You entered the following into the user input: " + userInput);
-                return "These are the results";
             }
-        }  
+        }    
    =================== */
 function defang(file, text){
     if(text === null || text.trim().length === 0){
