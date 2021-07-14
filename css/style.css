@@ -26,6 +26,7 @@ a{
     position: absolute;
     padding: 5px;
     border-radius: 5px;
+    transition: all 0.2s ease;
 }
 
 .menu_button{
@@ -39,6 +40,11 @@ a{
     cursor: pointer;
     text-align: center;
     user-select: none;
+}
+
+.focus{
+    transform: scale(1.005);
+    box-shadow: 0 0 20px whitesmoke;
 }
 
 /* Element by ID */

@@ -107,8 +107,6 @@ function getCurrentDimensions(){
     let FOOTER_WIDTH = WINDOW_WIDTH;
     let FOOTER_HEIGHT = (0.05 * window.innerHeight) - 15;
 
-    
-
     return {
         "WINDOW_HEIGHT":WINDOW_HEIGHT + "px",
         "WINDOW_WIDTH":WINDOW_WIDTH + "px",

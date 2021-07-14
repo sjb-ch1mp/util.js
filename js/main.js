@@ -10,32 +10,26 @@ class Utility{
     }
     executeUtility = () => {
 
+        doPreUtilityCleanUp();
+
         consoleLog("Executing utility \"" + this.name + "\"", "head");
 
-        let promise = new Promise((resolve, reject) => {    
-            try{
-                let result = this.execute(getFileInput(), getTextInput())
-                if(result.isCallback){
-                    consoleLog(result.query);
-                }else if(result.isErrorResult){
-                    reject(result.message);
-                }else{
-                    resolve({"utility":this.name,"result":result});
-                }
-            }catch(e){
-                reject(e.message);
-            }
-        });
-        
-        promise
-            .then((result) => {
-                RESULT = result;
+        try{
+            let result = this.execute(getFileInput(), getTextInput())
+            if(result.isCallback){
+                consoleLog(result.query, "prompt");
+            }else if(result.isErrorResult){
+                consoleLog(result.message, "err");
+            }else{
+                RESULT = {"utility":this.name,"result":result};
                 showResult();
                 consoleLog("Utility completed successfully.");
-            })
-            .catch((err) => {
-                consoleLog("Utility completed with error: " + err, "err");
-            });
+            }
+        }catch(err){
+            consoleLog("Utility completed with error: " + err, "err");
+        }
+
+        doPostUtilityCleanUp();
     }
     render = () => {
         const utilities = document.getElementById('utilities');
@@ -64,6 +58,29 @@ function buildUtilityMenuItem(utility){
     };
     button.innerText = utility.name;
     return button;
+}
+
+function doPreUtilityCleanUp(){
+
+    if(!(document.getElementById('user_input_form').onsubmit === null)){
+        document.getElementById('user_input_form').onsubmit = null;
+        focusUserInput(false);
+        consoleLog("No user input detected. Utility callback aborted!", "err");
+    }
+
+    document.getElementById('results').value = "";
+    document.getElementById('user_input').value = "";
+    
+    RESULTS = null;
+}
+
+function doPostUtilityCleanUp(){
+    document.getElementById('text_input').value = "";
+    document.getElementById('user_input').value = "";
+
+    RESULTS = null;
+    TEXT = null;
+    FILE = null;
 }
 
 class ErrorResult{
@@ -119,18 +136,26 @@ function consoleLog(message, type){
     let consolePanel = document.getElementById('console');
     if(type === "err"){
         message = "[x] " + message;
+        consolePanel.innerText += '\n' + message;
     }else if(type === "head"){
         message = "[+] " + message;
+        consolePanel.innerText += '\n' + message;
     }else if(type === "block"){
         let messageString = "";
         for(let i in message){
             messageString += "|__ " + message[i] + "\n";
         }
-        message = messageString.replace(/\n$/, "");
+        message = messageString.replace(/\n$/, "");   
+        consolePanel.innerText += '\n' + message;
+    }else if(type === "prompt"){
+        consolePanel.innerText += '\n|__ ' + message + '\n<<<';
+    }else if(type === "input"){
+        consolePanel.innerText += " " + message;
     }else{
         message = "|__ " + message;
+        consolePanel.innerText += '\n' + message;
     }
-    consolePanel.innerText += '\n' + message;
+    
     consolePanel.scrollTop = consolePanel.scrollHeight;
 }
 
@@ -271,28 +296,39 @@ function welcome(){
     consoleLog("Hold the ALT key while clicking on a utility to show its description and usage notes in this console.");
 }
 
-function promptUser(query, callback, timeout){
-    let promise = new Promise((resolve, reject) => {
+function promptUser(utilityName, query, callback){
+    focusUserInput(true);
+    document.getElementById('user_input_form').onsubmit = () => {
+        focusUserInput(false);
         try{
-            setTimeout(() => {
-                userInput = document.getElementById('user_input').value;
-                document.getElementById('user_input').value = "";
-                resolve(userInput);
-            }, timeout);
-        }catch(err){
-            reject(err.message);
-        }
-    });
+            let userInput = document.getElementById('user_input').value;
+            document.getElementById('user_input').value = "";
+            consoleLog(userInput, "input");
 
-    promise.then(
-        (userInput) => {
-            callback(userInput);
+            let result = callback(userInput);
+            if(result.isErrorResult){
+                consoleLog("Utility finished with error: " + result.message, "err");
+            }else{
+                RESULT = {"utility":utilityName, "result":result};
+                showResult();
+                consoleLog("Utility completed successfully.");
+            }
+        }catch(e){
+            consoleLog("Utility finished with error: " + e.message, "err");
         }
-    ).catch(
-        (err) => {
-            consoleLog("Utility completed with error: " + err, "err");
-        }
-    );
+        return false;
+    };
+    return new CallbackResult(query);
+}
 
-    return new CallbackResult("[" + (timeout/1000) + "s] " + query);
+function focusUserInput(focus){
+    let USER_INPUT = document.getElementById('user_input');
+    let CONSOLE = document.getElementById('console');
+    if(focus){
+        USER_INPUT.classList.add('focus');
+        CONSOLE.classList.add('focus');
+    }else{
+        USER_INPUT.classList.remove('focus');
+        CONSOLE.classList.remove('focus');
+    }
 }
