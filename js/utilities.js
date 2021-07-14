@@ -25,13 +25,6 @@ function getUtilities(){
                 "To use this utility, simply copy-paste your defanged URLs or emails into the text input and click the utility button."
             ],
             refang
-        ),
-        new Utility(
-            "[TEST] Test user input",
-            [
-                "Testing user input"
-            ],
-            testUserInput
         )
     ];
 }
@@ -78,9 +71,9 @@ function getUtilities(){
         == utility functions ==
         function testUserInput(){
             return promptUser(
+                this.name,
                 "Enter anything in the user input text area:",
-                testUserInput__callback,
-                3000
+                testUserInput__callback
             );
         }
 
@@ -89,8 +82,9 @@ function getUtilities(){
                 consoleLog("No user input detected! Aborting utility.", "err");
             }else{
                 consoleLog("You entered the following into the user input: " + userInput);
+                return "These are the results";
             }
-        }    
+        }  
    =================== */
 function defang(file, text){
     if(text === null || text.trim().length === 0){
@@ -113,20 +107,3 @@ function refang(file, text){
     refangedText = refangedText.replace(/\\/g, "");
     return refangedText;
 }
-
-function testUserInput(){
-    return promptUser(
-        this.name,
-        "Enter anything in the user input text area:",
-        testUserInput__callback
-    );
-}
-
-function testUserInput__callback(userInput){
-    if(userInput == null || userInput == undefined || userInput.trim().length === 0){
-        consoleLog("No user input detected! Aborting utility.", "err");
-    }else{
-        consoleLog("You entered the following into the user input: " + userInput);
-        return "These are the results";
-    }
-}  
