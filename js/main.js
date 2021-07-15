@@ -16,7 +16,9 @@ class Utility{
 
         try{
             let result = this.execute(getFileInput(), getTextInput())
-            if(result.isCallback){
+            if(result == null){
+                consoleLog("Uh oh. The utility is returning a null result.", "err");
+            }else if(result.isCallback){
                 consoleLog(result.query, "prompt");
             }else if(result.isErrorResult){
                 consoleLog(result.message, "err");
@@ -85,20 +87,14 @@ function doPostUtilityCleanUp(){
 class ErrorResult{
     constructor(message){
         this.message = message;
-    }
-
-    isErrorResult(){
-        return true;
+        this.isErrorResult = true;
     }
 }
 
 class CallbackResult{
     constructor(query){
         this.query = query;
-    }
-
-    isCallback(){
-        return true;
+        this.isCallback = true;
     }
 }
 
@@ -161,7 +157,7 @@ function consoleLog(message, type){
 function getFileInput(){
     if(FILE == null){
         consoleLog("No file has been loaded. Ignoring file input.", "");
-        return {"name":"","content":"","type":"","processed":false};
+        return {"name":null,"content":null,"type":null,"processed":false};
     }
 
     if(!FILE.processed){
@@ -303,7 +299,6 @@ function promptUser(utilityName, query, callback){
             let userInput = document.getElementById('user_input').value;
             document.getElementById('user_input').value = "";
             consoleLog(userInput, "input");
-
             let result = callback(userInput);
             if(result.isErrorResult){
                 consoleLog("Utility finished with error: " + result.message, "err");
