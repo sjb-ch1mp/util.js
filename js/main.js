@@ -301,7 +301,9 @@ function promptUser(utilityName, query, callback){
             document.getElementById('user_input').value = "";
             consoleLog(userInput, "input");
             let result = callback(userInput);
-            if(result.isErrorResult){
+            if(result == null){
+                consoleLog("Uh oh. The utility is returning a null result.", "err");
+            }else if(result.isErrorResult){
                 consoleLog("Utility finished with error: " + result.message, "err");
             }else{
                 RESULT = {"utility":utilityName, "result":result};
@@ -310,8 +312,10 @@ function promptUser(utilityName, query, callback){
             }
         }catch(e){
             consoleLog("Utility finished with error: " + e.message, "err");
+	    document.getElementById('user_input_form').onsubmit = () => {return false;};
         }
         return false;
+	document.getElementById('user_input_form').onsubmit = () => {return false;};
     };
     return new CallbackResult(query);
 }
