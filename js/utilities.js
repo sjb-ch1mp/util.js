@@ -81,7 +81,7 @@ function getUtilities(){
             if(userInput == null || userInput == undefined || userInput.trim().length === 0){
                 consoleLog("No user input detected! Aborting utility.", "err");
             }else{
-                consoleLog("You entered the following into the user input: " + userInput);
+                return "You entered the following into the user input: " + userInput;
             }
         }    
    =================== */
