@@ -42,5 +42,16 @@
 
         welcome();
         renderUtilities();
+		
+		let RICH_TEXT = null;
+		document.getElementById("text_input").addEventListener('paste', (event) => {
+			RICH_TEXT = event.clipboardData.getData("text/html").toString().trim();
+			if(RICH_TEXT != null && RICH_TEXT.length > 0){
+				consoleLog("HTML detected in clipboard. Stored as rich text.");
+			}else{
+				consoleLog("No HTML detected in clipboard. No rich text has been stored.");
+				RICH_TEXT = null;
+			}
+		});
     </script>
 </html>
