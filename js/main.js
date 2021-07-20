@@ -82,6 +82,7 @@ function doPostUtilityCleanUp(){
 
     RESULTS = null;
     TEXT = null;
+	RICH_TEXT = null;
 }
 
 class ErrorResult{
