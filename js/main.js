@@ -165,7 +165,15 @@ function getFileInput(){
         if(FILE.type === "text/csv" || (FILE.type === "application/vnd.ms-excel" && FILE.name.endsWith(".csv"))){
             FILE.content = processCSV(FILE.content);
             FILE.processed = true;
-        }else if(FILE.type === "text/plain"){
+        }else if(FILE.type === "application/json"){
+            try{
+                FILE.content = JSON.parse(FILE.content);
+                FILE.process = true;
+            }catch(err){
+                consoleLog("An error occurred when attempting to parse the json file: " + err.message, "err");
+                FILE.content = null;
+            }
+        }else{
             FILE.content = processTXT(FILE.content);
             FILE.processed = true;
         }
@@ -264,11 +272,6 @@ function loadFile(event){
 
     consoleLog("Loading file \"" + file.name + "\"", "head");
     consoleLog("File type: " + file.type, "");
-
-    if(file.type !== "text/csv" && !(file.type === "application/vnd.ms-excel" && /\.csv$/.test(file.name)) && file.type !== "text/plain"){
-        consoleLog("Sorry. util.js only accepts .txt and .csv files at the moment.", "err");
-        return;
-    }
 
     let reader = new FileReader();
     reader.onload = () => {
