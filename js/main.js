@@ -28,6 +28,7 @@ class Utility{
                 consoleLog("Utility completed successfully.");
             }
         }catch(err){
+            console.log(err);
             consoleLog("Utility completed with error: " + err, "err");
         }
 
@@ -63,12 +64,9 @@ function buildUtilityMenuItem(utility){
 }
 
 function doPreUtilityCleanUp(){
-
-    if(!(document.getElementById('user_input_form').onsubmit === null)){
-        document.getElementById('user_input_form').onsubmit = null;
-        focusUserInput(false);
-        consoleLog("No user input detected. Utility callback aborted!", "err");
-    }
+    
+    document.getElementById('user_input_form').onsubmit = () => {return false;};
+    focusUserInput(false);
 
     document.getElementById('results').value = "";
     document.getElementById('user_input').value = "";
@@ -180,10 +178,10 @@ function promptUser(utilityName, query, callback){
             }
         }catch(e){
             consoleLog("Utility finished with error: " + e.message, "err");
-	    document.getElementById('user_input_form').onsubmit = () => {return false;};
+	        document.getElementById('user_input_form').onsubmit = () => {return false;};
         }
+        document.getElementById('user_input_form').onsubmit = () => {return false;};
         return false;
-	document.getElementById('user_input_form').onsubmit = () => {return false;};
     };
     return new CallbackResult(query);
 }
