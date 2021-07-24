@@ -136,61 +136,135 @@ function loadFile(event){
 class PDFParser{
     constructor(dcmnt){
         this.buffer = dcmnt;
+        this.current = null;
     }
 
     parse(){
 
         //find version
-        while(this.hasNext() && this.current() != PDFToken.PERCENT){
+        while(this.hasNext() && this.current !== PDFToken.PERCENT){
             this.next();
         }
-        if(!(this.hasNext())){
+        if(!(this.hasNext()) || this.carve(/-/, 1, false) !== PDFControlWord.PDF_VERSION){
             throw new Error("PDF version not found. This does not appear to be a valid PDF file!");
         }
 
-    }
+        this.next();
+        let pdf = new PDFDocument(this.current);
 
-    next(){
-        this.buffer = this.buffer.substring(1).trim();
-    }
 
-    peek(distance){
-        return (this.buffer.length >= distance)?this.buffer.substring(0, distance):null;
-    }
-
-    carve(symbol){
-        let carved = "";
-        while(this.hasNext && this.current() !== symbol){
-            carved += this.buffer[0];
-            this.buffer = this.buffer.substring(1);
+        let leading = [];
+        while(this.hasNext()){
+            switch(this.current){
+                case PDFControlWord.START_OBJECT:
+                    pdf.objects[leading[leading.length - 2]] = parsePDFObject(leading[leading.length - 1]);
+                    leading = [];
+                default:
+                    leading.push(this.current);
+            }
+            this.next();
+            if(this.current === PDFControlWord.EOF){
+                break;
+            }
         }
-        return carved;
+        return pdf;
     }
 
-    hasNext(){
-        return this.buffer.length > 1;
+    parsePDFObject(version){
+        let pdfobj = new PDFObject(version);
+        while(this.hasNext() && this.current !== PDFControlWord.END_OBJECT){
+            this.next();
+            switch(this.current){
+                case PDFToken.OPEN_DICT:
+                    pdfobj.dictionary = parsePDFDictionary();
+                case PDFControlWord.START_STREAM:
+                    pdfobj.stream = parseStream();
+            }
+        }
+        return pdfobj;
     }
 
-    current(){
+    parsePDFDictionary(){
+        let dictionary = {};
+        while(this.hasNext() && this.current !== PDFToken.CLOSE_DICT){
+            let key = null;
+            let val = null;
+            this.next();
+            switch(this.current){
+                case PDFToken.SOLIDUS:
+                    this.next();
+                    //FIXME : up to here
+            }
+        }
+        return dictionary;
+    }
+
+    parsePDFArray(){
+        
+    }
+
+    peek(steps){
+        return (this.buffer.length >= steps)?this.buffer.substring(0, steps):null;
+    }
+
+    next(delim){
+        this.buffer = this.buffer.trim();
+
         switch(this.buffer[0]){
             case PDFToken.LESS_THAN:
                 if(this.peek(2) === PDFToken.OPEN_DICT){
                     this.next();
-                    return PDFToken.OPEN_DICT;
+                    this.current = PDFToken.OPEN_DICT;
                 }else{
-                    return PDFToken.LESS_THAN;
+                    this.current = PDFToken.LESS_THAN;
                 }
             case PDFToken.GREATER_THAN:
                 if(this.peek(2) === PDFToken.CLOSE_DICT){
                     this.next();
-                    return PDFToken.CLOSE_DICT;
+                    this.current = PDFToken.CLOSE_DICT;
                 }else{
-                    return PDFToken.LESS_THAN;
+                    this.current = PDFToken.LESS_THAN;
                 }
             case PDFToken.SOLIDUS:
-                this.next();
-
+                this.current = PDFToken.SOLIDUS;
+            case PDFToken.OPEN_BRACKET:
+                this.current = PDFToken.OPEN_BRACKET;
+            case PDFToken.CLOSE_BRACKET:
+                this.current = PDFToken.CLOSE_BRACKET;
+            case PDFToken.PERCENT:
+                this.current = PDFToken.PERCENT;
+            case PDFToken.OPEN_PAREN:
+                this.current = PDFToken.OPEN_PAREN;
+            case PDFToken.CLOSE_PAREN:
+                this.current = PDFToken.CLOSE_PAREN;
+            default:
+                this.current = this.carve(/\s/, 1, true);
         }
+    }
+
+    carve(symbol, numSymbol, consume){
+        let carved = "";
+        let symbolCount = 0;
+        let index = 0;
+        while(this.hasNext() && symbolCount < numSymbol){
+            if(symbol.test(this.buffer[0])){
+                symbolCount++;
+            }
+            if(symbolCount < numSymbol){
+                if(consume){
+                    carved += this.buffer[0];
+                    this.buffer = this.buffer.substring(1);
+                }else{
+                    carved += this.buffer[index++];
+                }
+            }
+            symbol.reset
+        }
+        return (carved.length > 0)?carved:null;
+    }
+
+    hasNext(){
+        return this.current != null;
     }
 }
 
@@ -202,11 +276,10 @@ class PDFDocument{
 }
 
 class PDFObject{
-    constructor(id, version, dictionary, stream){
-        this.id = id;
+    constructor(version){
         this.version = version;
-        this.dictionary = dictionary;
-        this.stream = stream;
+        this.dictionary = null;
+        this.stream = null;
     }
 }
 
