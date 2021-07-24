@@ -8,9 +8,6 @@ function getFileInput(){
         if(FILE.type === "text/csv" || (FILE.type === "application/vnd.ms-excel" && FILE.name.endsWith(".csv"))){
             FILE.content = processCSV(FILE.content);
             FILE.processed = true;
-        }else if(FILE.type === "application/pdf"){
-            FILE.content = new PDFParser(FILE.content).parse();
-            FILE.processed = true;
         }else if(FILE.type === "application/json"){
             try{
                 FILE.content = JSON.parse(FILE.content);
@@ -19,7 +16,7 @@ function getFileInput(){
                 consoleLog("An error occurred when attempting to parse the json file: " + err.message, "err");
                 FILE.content = null;
             }
-        }else{
+        }else if(FILE.type === "text/plain"){
             FILE.content = processTXT(FILE.content);
             FILE.processed = true;
         }
