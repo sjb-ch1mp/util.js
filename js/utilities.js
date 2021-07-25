@@ -45,11 +45,12 @@ function getUtilities(){
         return promptUser(
             this.name,
             "<user-prompt>",
-            utilityFunction__userInput__callback
+            utilityFunction__userInput__callback,
+            params
         );
     }
 
-    function utilityFunction__userInput__callback(userInput){
+    function utilityFunction__userInput__callback(userInput, params){
         let results = "";
         // your code here
         return results;

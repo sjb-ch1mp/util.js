@@ -72,6 +72,7 @@ function doPreUtilityCleanUp(){
     document.getElementById('user_input').value = "";
     
     RESULTS = null;
+    PARAMS = null;
 }
 
 function doPostUtilityCleanUp(){
@@ -158,15 +159,16 @@ function welcome(){
     consoleLog("Hold the ALT key while clicking on a utility to show its description and usage notes in this console.");
 }
 
-function promptUser(utilityName, query, callback){
+function promptUser(utilityName, query, callback, params){
     focusUserInput(true);
+    PARAMS = params;
     document.getElementById('user_input_form').onsubmit = () => {
         focusUserInput(false);
         try{
             let userInput = document.getElementById('user_input').value;
             document.getElementById('user_input').value = "";
             consoleLog(userInput, "input");
-            let result = callback(userInput);
+            let result = callback(userInput, PARAMS);
             if(result == null){
                 consoleLog("Uh oh. The utility is returning a null result.", "err");
             }else if(result.isErrorResult){
@@ -179,8 +181,10 @@ function promptUser(utilityName, query, callback){
         }catch(e){
             consoleLog("Utility finished with error: " + e.message, "err");
 	        document.getElementById('user_input_form').onsubmit = () => {return false;};
+            PARAMS = null;
         }
         document.getElementById('user_input_form').onsubmit = () => {return false;};
+        PARAMS = null;
         return false;
     };
     return new CallbackResult(query);
@@ -196,4 +200,16 @@ function focusUserInput(focus){
         USER_INPUT.classList.remove('focus');
         CONSOLE.classList.remove('focus');
     }
+}
+
+function addListeners(){
+    document.getElementById("text_input").addEventListener('paste', (event) => {
+        RICH_TEXT = event.clipboardData.getData("text/html").toString().trim();
+        if(RICH_TEXT != null && RICH_TEXT.length > 0){
+            consoleLog("HTML detected in clipboard. Stored as rich text.");
+        }else{
+            consoleLog("No HTML detected in clipboard. No rich text has been stored.");
+            RICH_TEXT = null;
+        }
+    });
 }

@@ -11,11 +11,20 @@ Logo by [flaticon.com](https://flaticon.com).
 # Summary
 util.js provides a simple framework and interface for storing and running utility scripts. This was built because I often found myself writing scripts to expedite simple, but repetitive tasks at work; each time requiring me to rebuild some kind of simple web structure to hold and run them in. util.js has been designed to be flexible, enabling any kind of Javascript function to be fed inputs and executed with a button.
 
+To get your brain juices flowing, here are some utility scripts that I have in my own instance of util.js.
+
+- Script to format tables copied from Splunk as Jira-compatible markdown,
+- Script to detect risky key words in PDF documents (inspired by Didier's [pdfid.py](https://blog.didierstevens.com/2009/03/31/pdfid/)),
+- Script to transform Splunk JSON exports into [PivotDrill](https://github.com/sjb-ch1mp/PivotDrill)-compatible (read: 'correctly formatted') JSON files,
+- Script to extract user accounts from [HIBP](https://haveibeenpwned.com/) CSV exports and format them for Splunk queries...
+
+...and more and more. I have included a couple of simple example utilities in this distributed copy of util.js ("Defang" and "Refang"), which I also frequently use.
+
 # User Interface
 The util.js UI consists of 7 main components: 
 
 1. **File Input:** users can upload a file of any kind by pressing here.
-2. **Text Input:** users can enter text input here.
+2. **Text Input:** users can enter text input here. When a user copy pastes anything into the Text Input area, if the clipboard contains HTML, this is stored in the global `RICH_TEXT` parameter.
 3. **Utility Panel:** a button is rendered here for each utility script. If the user holds the `Alt` key while clicking a utility button, its description and instructions will be printed to the console panel.
 4. **Download Result:** clicking this button will download the results of the last executed utility script as a `.txt` file. 
 5. **Result Panel:** the result of the utility script is dumped here as Unicode text.
@@ -68,39 +77,89 @@ function defang(file, text){
 
 While you're obviously free to make any changes you want, you only need to modify the file 'utilities.js' in order to add Utilities to util.js. This file contains templates that you can use to start writing your utilities.
 
-# Programming Interface
+# User Input
+User input deserves a special mention as it changes the way in which you need to implement utilities. If you need to get user input, you need to implement two functions: the utility function, and a callback function that will be executed after util.js receives user input. 
 
-## File Processing
-util.js provides some functions that you can use to process certain types of files. I intend to add more processing options for different file types over time. The supported file types and the way in which they are processed are listed below. 
+The utility function must end by returning the results of the `promptUser()` function. This function will send a prompt to the user, activate the User Input field and highlight the console to warn them that the utility is awaiting their input. Again, this must the last statement in the utility function - one of the parameters passed to the `promptUser()` function is the callback function that will be passed the input from the user, thus continuing and completing the utility script.
 
-Files are stored in util.js as an object with the file name, file type and file content, e.g. 
+The `promptUser()` function takes four parameters: 
+
+1. **utilityName:** the name of the utility being executed. This can simply be passed with `this.name`.
+2. **query:** the string that will be used to prompt the user. This can be a query or an insult. 
+3. **callback:** a reference to the callback function, or if you like code spaghetti, this can be the function itself.
+4. **params:** an object containing arbitrary parameters, e.g. the contents of the current file in the file input.
+
+The callback function referenced in the call to `promptUser()` can be passed two parameters: 
+
+1. **userInput:** this is the input from the user (mandatory - and kind of the point anyway).
+2. **params:** this is an object containing arbitrary parameters (optional).
+
+The following example demonstrates a simple utility which requires user input. I have also included template functions for 'user input' utility scripts in utilities.js. 
+
 ```
-file = {
-    "name":"my-csv-file.csv",
-    "type":"application/vnd.ms-excel",
-    "content":<actual-file-content>
+// First, I add a new Utility class to the array in utilities.js::getUtilities()..
+
+function getUtilities(){
+    return [
+       new Utility(
+           "Hey User! Yes or no?",
+           [
+               "This utility will ask the user a yes or no question.",
+               "To use this utility, press the utility button"
+           ],
+           heyUser__yesOrNo
+       )
+    ];
+}
+
+// I then write the utility function, passing it the file and text parameters...
+
+function heyUser__yesOrNo(file, text){
+    let params = {
+        "param1":"This is an arbitrary parameter",
+        "param2":file.content,
+        "param3":text
+    }
+
+    // If I want user input, I must complete the utility function by returning the results
+    // of the promptUser function...
+
+    return promptUser(
+        this.name,                      //utilityName
+        "Hey User! Yes or no?",         //query
+        heyUser__yesOrNo__callback,     //callback
+        params                          //params (optional)
+    );
+}
+
+// I then must define the callback function, remembering to pass the userInput and params parameters...
+
+function heyUser__yesOrNo__callback(userInput, params){
+    let result = "Parameter 1 is \"" + params.param1 + "\"";
+    result += "\n\nParameter 2 is:\n";
+    result += params.param2;
+    result += "\n\nParameter 3 is: " + params.param3;
+    result += "\n\nFinally, you entered: " + userInput;
+    return result;
 }
 ```
 
-### Text Files
-util.js can process text files by splitting them into new lines.
+# Useful Functions
+The following are some functions that I have incorporated into util.js over time.
 
-To do so, call the `processTXT()` function and pass it a reference to the current file in file input, e.g. `processTXT(file)`.
+### processTXT(file)
+The `processTXT()` function will split the file content at each new line character, returning an array of strings. It must be passed the current file in the file input. This can be done for any file type. 
 
-This function will return a new file object, in which the `file.content` key references an array of strings.
+### processCSV(file)
+The `processCSV()` function will transform the content of a CSV file into an array in which each of the elements represents a row of the CSV table, and each element contains keys corresponding to the columns of the CSV table. It must be passed the current file in the file input. The file must be of type `text/csv`, or `application/vnd.ms-excel` with file extension `.csv`.
 
-In truth, any type of file can be processed this way, but I've found this most useful for text files. 
-
-### CSV Files
-util.js can process a CSV file by turning each row into an object in which each column is a key. For example, the CSV file...
-
+For example, it will change this CSV...
 ```
 header_1,header_2,header_3
 1,stuff,things
 2,"more stuff","more things"
 ```
-
-...would be transformed into the following array: 
+...into this...
 ```
 [
     {
@@ -116,43 +175,33 @@ header_1,header_2,header_3
 ]
 ```
 
-To do so, call the `processCSV()` function and pass it a reference to the current file in the file input, e.g. `processCSV(file)`.
+### new PDFParser(file).parse()
+The `PDFParser` will extract all the object dictionaries from a PDF file (but will skip the data streams). The use the PDF parser, you must pass the current file in the file input to the constructor of the `PDFParser` object and call the function `parse()`, e.g. `file = new PDFParser(file).parse()`.
 
-This function will return a new file object, in which the `file.content` key references an array of objects as described above.
-
-### PDF Files
-util.js can parse a PDF file and return an object that contains the dictionaries of all of that documents PDF objects.
-
-For example, using the PDFParser to extract object information from my gas bill returns the following object: 
+For example, this was returned after passing my gas bill: 
 
 ![pdf.png](https://github.com/sjb-ch1mp/util.js/blob/master/img/readme/pdf.png)
 
-To do so, create a new `PDFParser` object, passing it a reference to the current file in the file input, and then call the `parse()` function e.g. `file = new PDFParser(file).parse();`.
+### consoleLog(message, messageType)
+The `consoleLog()` function will print a message to the Console Panel. It should be passed two parameters: 
 
-The `PDFParser.parse()` function will return a new file object in which the `file.content` key references a `PDFDocument` object. This object is of the form: 
+1. **message:** the message to be printed to the Console Panel.
+2. **messageType:** the type of the message, which determines how it will be formatted. 
 
-```
-{
-    "version":<pdf-version>,
-    "objects":{...}
-}
-```
-...where the elements of the `objects` object are of the form: 
-```
-{
-    "id":<pdf-object-id>,
-    "version":<pdf-object-version>,
-    "hasStream":<true|false>, //indication of whether or not this PDF object contains an object stream
-    "dictionary":{...}, //key value pairs from the PDF Object dictionary
-    "references":[...] //list of other PDF objects referenced by this PDF object
-}
-```
+Four values are supported for the messageType parameter: 
 
-### Clipboard HTML
-When a user copy pastes anything into the Text Input area, if the clipboard contains HTML, this is stored in the global `RICH_TEXT` parameter, if you wish to use this instead of the plain text.
+1. **"head":** this will print a header, i.e. \[+\] ...message...
+2. **"err":** this will print an error, i.e. \[x\] ...message...
+3. **"block":** this will take an array of strings and format it appropriately, i.e. 
+   1. |__ ...message one...
+   2. |__ ...message two...
+   3. |__ ...message three...
+4. **"":** if the messageType parameter is left out or blank, the default formatting will be applied, i.e. |__ ...message...
 
-## User Input
+### return ErrorResult(message)
+If you wish to explicitly exit your utility function on an error, you can return an `ErrorResult()` object so that the correct action is taken by util.js. The constructor of this object should be passed a message.
 
-## Console
-
-## Handling Errors
+# Update Log
+|Date|Version|Notes|
+|---|---|---|
+|25 July 2021|1.0.0|Committed version 1.|
