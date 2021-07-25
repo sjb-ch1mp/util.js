@@ -191,16 +191,20 @@ The `consoleLog()` function will print a message to the Console Panel. It should
 Four values are supported for the messageType parameter: 
 
 1. **"head":** this will print a header, i.e. 
+   
 `[+] ...message...`
 2. **"err":** this will print an error, i.e. 
+   
 `[x] ...message...`
 3. **"block":** this will take an array of strings and format it appropriately, i.e. 
+   
 ```
 |__ ...message one...
 |__ ...message two...
 |__ ...message three...
 ```
 4. **"":** if the messageType parameter is left out or blank, the default formatting will be applied, i.e. 
+
 `|__ ...message...`
 
 ### return ErrorResult(message)
