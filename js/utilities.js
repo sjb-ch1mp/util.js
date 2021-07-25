@@ -28,14 +28,6 @@ function getUtilities(){
                 "To use this utility, simply copy-paste your defanged URLs or emails into the text input and click the utility button."
             ],
             refang
-        ),
-        new Utility(
-            "<utility-name>",
-            [
-                "<utility-description>",
-                "<utility-instructions>"
-            ],
-            test
         )
     ];
 }
@@ -85,9 +77,4 @@ function refang(file, text){
     refangedText = refangedText.replace(/\[(at|@)\]/g, "@");
     refangedText = refangedText.replace(/\\/g, "");
     return refangedText;
-}
-
-function test(file, text){
-    file = new PDFParser(file).parse();
-    console.log(file);
 }

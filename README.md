@@ -66,7 +66,7 @@ function defang(file, text){
 }
 ```
 
-While you're obviously free to make any changes you want, you only need to modify the file 'utilities.js' in order to add Utilities to util.js.
+While you're obviously free to make any changes you want, you only need to modify the file 'utilities.js' in order to add Utilities to util.js. This file contains templates that you can use to start writing your utilities.
 
 # Programming Interface
 
