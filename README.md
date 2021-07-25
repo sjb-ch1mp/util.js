@@ -2,16 +2,16 @@
 
 [![Creative Commons License](https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png)](http://creativecommons.org/licenses/by-nc-sa/4.0/)
 
-### Author 
+# Author 
 Samuel Brookes ([@sjb-ch1mp](https://github.com/sjb-ch1mp))
 
-### Attribution
+# Attribution
 Logo by [flaticon.com](https://flaticon.com).
 
-### Summary
+# Summary
 util.js provides a simple framework and interface for storing and running utility scripts. This was built because I often found myself writing scripts to expedite simple, but repetitive tasks at work; each time requiring me to rebuild some kind of simple web structure to hold and run them in. util.js has been designed to be flexible, enabling any kind of Javascript function to be fed inputs and executed with a button.
 
-### User Interface
+# User Interface
 The util.js UI consists of 7 main components: 
 
 1. **File Input:** users can upload a file of any kind by pressing here.
@@ -24,7 +24,7 @@ The util.js UI consists of 7 main components:
 
 ![util.js-ui](https://github.com/sjb-ch1mp/util.js/blob/master/img/readme/ui.png)
 
-### Adding a Utility
+# Adding a Utility
 In order to add a new utility to util.js, you must add a new Utility object to the array in function utilities.js::getUtilities(). util.js will render a utility button for each Utility object included in this array.
 
 The Utility constructor takes three parameters: 
@@ -68,18 +68,20 @@ function defang(file, text){
 
 **NOTE:** While you're obviously free to make any changes you want, you only need to modify the file 'utilities.js' in order to add Utilities to util.js.
 
-### Programming Interface
+# Programming Interface
 
 ## File Processing
 
-# Text Files
+### Text Files
 
-# CSV Files
+### CSV Files
 
-# PDF Files
+### PDF Files
 
-# Clipboard HTML
+### Clipboard HTML
 
 ## User Input
 
 ## Console
+
+## Handling Errors
