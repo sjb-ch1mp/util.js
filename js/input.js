@@ -160,23 +160,19 @@ class PDFParser{
             this.next();
             switch(this.current){
                 case PDFControlWord.START_OBJECT:
-                    pdf.objects[leading[leading.length - 2]] = this.parsePDFObject(leading[leading.length - 1]);
+                    pdf.objects[leading[leading.length - 2]] = this.parsePDFObject(leading[leading.length - 2], leading[leading.length - 1]);
                     purge();
                     break;
                 default:
                     leading.push(this.current);
-            }
-            if(this.current === PDFControlWord.EOF){
-                break;
             }
         }
 
         return pdf;
     }
 
-    parsePDFObject(version){
-
-        let pdfobj = new PDFObject(version);
+    parsePDFObject(id, version){
+        let pdfobj = new PDFObject(id, version);
         while(this.hasNext() && this.current !== PDFControlWord.END_OBJECT){
             this.next();
             switch(this.current){
@@ -188,10 +184,14 @@ class PDFParser{
                     pdfobj.dictionary = this.convertArrayToDictionary(array);
                     break;
                 case PDFControlWord.START_STREAM:
-                    pdfobj.stream = this.parseObjectStream();
+                    pdfobj.hasStream = this.skipObjectStream();
+                    break;
+                case PDFToken.SOLIDUS:
+                    this.next;
+                    let key = this.current;
+                    pdfobj.dictionary[key] = true;
             }
         }
-
         if(Object.keys(pdfobj.dictionary.ref).length > 0){
             pdfobj.references = pdfobj.dictionary.ref;
         }
@@ -242,17 +242,15 @@ class PDFParser{
         return dictionary;
     }
 
-    parseObjectStream(){
-        let stream = "";
+    skipObjectStream(){
         while(this.hasNext() && this.current !== PDFControlWord.END_STREAM){
             this.buffer = this.buffer.substring(1);
-            stream += this.buffer[0];
             if(this.peek(1, 9) === PDFControlWord.END_STREAM){
                 this.buffer = this.buffer.substring(1);
                 this.next();
             }
         }
-        return stream;
+        return true;
     }
 
     parsePDFDictionary(){
@@ -376,6 +374,9 @@ class PDFParser{
                 pdfArray.push(this.parsePDFEncodedString());
             }else if(this.current === PDFToken.OPEN_PAREN){
                 pdfArray.push(this.parsePDFLiteralString());
+            }else if(this.current === PDFToken.SOLIDUS){
+                this.next();
+                pdfArray.push("/" + this.current);
             }else{
                 pdfArray.push(this.current);
             }
@@ -432,10 +433,11 @@ class PDFParser{
                 this.current = PDFToken.CLOSE_PAREN;
                 break;
             default:
-                this.current = this.carve(/(\s|\]|\>)/, 1, false);
+                this.current = this.carve(/(\s|\]|\>|\/|\[|\<|\(|\))/, 1, false);
         }
-
-        this.buffer = this.buffer.substring(this.current.length);
+        if(this.current != null){
+            this.buffer = this.buffer.substring(this.current.length);
+        }
     }
 
     carve(symbol, numSymbol, consume){
@@ -471,11 +473,12 @@ class PDFDocument{
 }
 
 class PDFObject{
-    constructor(version){
+    constructor(id, version){
+        this.id = id;
         this.version = version;
-        this.dictionary = null;
-        this.stream = null;
-        this.references = null;
+        this.dictionary = {"ref":{}};
+        this.hasStream = false;
+        this.references = [];
     }
 }
 
