@@ -1,15 +1,18 @@
+/*==== UTILITY OBJECT BOILERPLATE ===
+
+    new Utility(
+        "<utility-name>",
+        [
+            "<utility-description>",
+            "<utility-instructions>"
+        ],
+        utilityFunction
+    )
+
+=====================================*/
+
 function getUtilities(){
     return [
-        /* === EXAMPLE ===
-        new Utility(
-            "Utility Name",
-            [
-                "Description of what utility does...",
-                "...and instructions for how to use it."
-            ],
-            utilityFunction
-        )
-        */
        new Utility(
            "[General] Defang",
            [
@@ -29,62 +32,31 @@ function getUtilities(){
     ];
 }
 
-/* ===================
-    UTILITY FUNCTIONS
+/* ==== UTILITY FUNCTION BOILERPLATE ====
 
-    The functions below are called by the execute() function in a Utility class. 
+    function utilityFunction__noUserInput(file, text){
+        let result = "";
+        // your code here
+        return result;
+    }
 
-    When a function is defined below - it must appear in the Utility object declaration in the
-    renderUtilities() function above. 
+    function utilityFunction__userInput(file, text){
+        // your code here
+        return promptUser(
+            this.name,
+            "<user-prompt>",
+            utilityFunction__userInput__callback
+        );
+    }
 
-    A utility function should be passed the parameters 'file' and 'text' and should return a 'results' variable.
+    function utilityFunction__userInput__callback(userInput){
+        let results = "";
+        // your code here
+        return results;
+    }
 
-    If a terminal error occurs within the utility function, it should return an ErrorResult object with an error message.
+=========================================*/ 
 
-    If you wish to get user input, you must use the promptUser() function.
-    This function takes three parameters: the utility name (this.name), the prompt for the user, and the callback function.
-    A function that gets user input MUST return the results of the promptUser() function. 
-    
-    Example without user input:
-        function utilityFunction(file, text){    
-            let result = "";
-            console.log(file.content);
-            console.log(text);
-            try{
-                //do something
-            }catch(e){
-                return new ErrorResult(e.message);
-            }
-            return result;
-        }
-
-    Example with user input: 
-        == Utility declaration ==
-        new Utility(
-            "[TEST] Test user input",
-            [
-                "Testing user input"
-            ],
-            testUserInput
-        )
-        
-        == utility functions ==
-        function testUserInput(){
-            return promptUser(
-                this.name,
-                "Enter anything in the user input text area:",
-                testUserInput__callback
-            );
-        }
-
-        function testUserInput__callback(userInput){
-            if(userInput == null || userInput == undefined || userInput.trim().length === 0){
-                consoleLog("No user input detected! Aborting utility.", "err");
-            }else{
-                return "You entered the following into the user input: " + userInput;
-            }
-        }    
-   =================== */
 function defang(file, text){
     if(text === null || text.trim().length === 0){
         return new ErrorResult("Nothing detected in text input! Aborting utility.");

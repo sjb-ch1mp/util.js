@@ -1,45 +1,90 @@
+function getTextInput(){
+    let text = document.getElementById('text_input').value;
+    if(text.trim().length === 0){
+        consoleLog("No text has been entered. Ignoring text input.", "");
+        return "";
+    }
+    TEXT = text;
+    return text;
+}
+
 function getFileInput(){
     if(FILE == null){
         consoleLog("No file has been loaded. Ignoring file input.", "");
         return {"name":null,"content":null,"type":null,"processed":false};
     }
 
-    if(!FILE.processed){
-        if(FILE.type === "text/csv" || (FILE.type === "application/vnd.ms-excel" && FILE.name.endsWith(".csv"))){
-            FILE.content = processCSV(FILE.content);
-            FILE.processed = true;
-        }else if(FILE.type === "application/json"){
-            try{
-                FILE.content = JSON.parse(FILE.content);
-                FILE.process = true;
-            }catch(err){
-                consoleLog("An error occurred when attempting to parse the json file: " + err.message, "err");
-                FILE.content = null;
-            }
-        }else if(FILE.type === "text/plain"){
-            FILE.content = processTXT(FILE.content);
-            FILE.processed = true;
-        }
-    }
-
     return FILE;
 }
 
-function processCSV(content){
-    consoleLog("Processing CSV file.", "");
-    try{
-        let entities = [];
-        let rows = content.split(/\r?\n/);
-        let attributes = parseCSVRow(rows[0]);
-        for(let i=1; i<rows.length; i++){
-            if(rows[i].trim().length > 0){
-                entities.push(new CsvEntity(attributes, parseCSVRow(rows[i])));
-            }
+function loadFile(event){
+    if(event.target.files.length === 0){
+        return;
+    }
+
+    let file = event.target.files[0];
+
+    consoleLog("Loading file \"" + file.name + "\"", "head");
+    consoleLog("File type: " + file.type, "");
+
+    let reader = new FileReader();
+    reader.onload = () => {
+        FILE = {
+            "name": file.name,
+            "type": file.type,
+            "content": reader.result,
+            "processed":false
+        };
+        consoleLog("Success.", "");
+    };
+    reader.onerror = () => {
+        consoleLog("Error reading file: " + file.name, "err");
+        consoleLog(reader.error, "err");
+    };
+    reader.readAsText(file);
+}
+
+/*
+    TEXT FILES
+*/
+
+function processTXT(file){
+    consoleLog("Processing file \"" + file.name + "\" as TEXT.", "");
+    let lines = content.split(/\r?\n/);
+    let cleanLines = [];
+    for(let i in lines){
+        if(lines[i].trim().length > 0){
+            cleanLines.push(lines[i].trim());
         }
-        return entities;
-    }catch(err){
-        consoleLog("Error parsing CSV file.", "err");
-        consoleLog(err.message, "err");
+    }
+    return cleanLines;
+}
+
+/*
+    CSV FILES
+*/
+
+function processCSV(file){
+    if(FILE.type === "text/csv" || (FILE.type === "application/vnd.ms-excel" && FILE.name.endsWith(".csv"))){
+        consoleLog("Processing file \"" + file.name + "\" as CSV.", "");
+        try{
+            let entities = [];
+            let rows = file.content.split(/\r?\n/);
+            let attributes = parseCSVRow(rows[0]);
+            for(let i=1; i<rows.length; i++){
+                if(rows[i].trim().length > 0){
+                    entities.push(new CsvEntity(attributes, parseCSVRow(rows[i])));
+                }
+            }
+            file.content = entities;
+            return file;
+        }catch(err){
+            consoleLog("Error parsing CSV file.", "err");
+            consoleLog(err.message, "err");
+        }
+    }else{
+        consoleLog("File \"" + file.name + "\" does not appear to be a CSV file! processCSV() is unable to parse file type \"" + file.type + "\". Aborting.", "err");
+        return file;
     }
 }
 
@@ -84,62 +129,24 @@ class CsvEntity{
     }
 }
 
-function processTXT(content){
-    consoleLog("Processing text file.", "");
-    let lines = content.split(/\r?\n/);
-    let cleanLines = [];
-    for(let i in lines){
-        if(lines[i].trim().length > 0){
-            cleanLines.push(lines[i].trim());
-        }
-    }
-    return cleanLines;
-}
-
-function getTextInput(){
-    let text = document.getElementById('text_input').value;
-    if(text.trim().length === 0){
-        consoleLog("No text has been entered. Ignoring text input.", "");
-        return "";
-    }
-    TEXT = text;
-    return text;
-}
-
-function loadFile(event){
-    if(event.target.files.length === 0){
-        return;
-    }
-
-    let file = event.target.files[0];
-
-    consoleLog("Loading file \"" + file.name + "\"", "head");
-    consoleLog("File type: " + file.type, "");
-
-    let reader = new FileReader();
-    reader.onload = () => {
-        FILE = {
-            "name": file.name,
-            "type": file.type,
-            "content": reader.result,
-            "processed":false
-        };
-        consoleLog("Success.", "");
-    };
-    reader.onerror = () => {
-        consoleLog("Error reading file: " + file.name, "err");
-        consoleLog(reader.error, "err");
-    };
-    reader.readAsText(file);
-}
+/* 
+    PDF FILES
+*/
 
 class PDFParser{
-    constructor(dcmnt){
-        this.buffer = dcmnt;
+    constructor(file){
+        this.file = file;
+        this.buffer = file.content;
         this.current = null;
     }
 
     parse(){
+        if(this.file.type !== "application/pdf"){
+            consoleLog("File \"" + this.file.name + "\" does not appear to be a PDF! PDFParser is unable to parse file type \"" + this.file.type + "\". Aborting.", "err");
+            return this.file;
+        }
+
+        consoleLog("Parsing object metadata from PDF file \"" + this.file.name + "\".", "");
 
         //find version
         this.next();
