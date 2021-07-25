@@ -178,7 +178,7 @@ header_1,header_2,header_3
 ### new PDFParser(file).parse()
 The `PDFParser` will extract all the object dictionaries from a PDF file (but will skip the data streams). To use the PDF parser, you must pass the current file in the file input to the constructor of the `PDFParser` object and call the function `parse()`, e.g. `file = new PDFParser(file).parse()`. The file must be of type `application/pdf`.
 
-For example, this was returned after passing my gas bill: 
+For example, this was returned after parsing my gas bill: 
 
 ![pdf.png](https://github.com/sjb-ch1mp/util.js/blob/master/img/readme/pdf.png)
 
