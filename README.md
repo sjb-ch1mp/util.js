@@ -176,7 +176,7 @@ header_1,header_2,header_3
 ```
 
 ### new PDFParser(file).parse()
-The `PDFParser` will extract all the object dictionaries from a PDF file (but will skip the data streams). The use the PDF parser, you must pass the current file in the file input to the constructor of the `PDFParser` object and call the function `parse()`, e.g. `file = new PDFParser(file).parse()`.
+The `PDFParser` will extract all the object dictionaries from a PDF file (but will skip the data streams). The use the PDF parser, you must pass the current file in the file input to the constructor of the `PDFParser` object and call the function `parse()`, e.g. `file = new PDFParser(file).parse()`. The file must be of type `application/pdf`.
 
 For example, this was returned after passing my gas bill: 
 
@@ -190,13 +190,15 @@ The `consoleLog()` function will print a message to the Console Panel. It should
 
 Four values are supported for the messageType parameter: 
 
-1. **"head":** this will print a header, i.e. \[+\] ...message...
-2. **"err":** this will print an error, i.e. \[x\] ...message...
+1. **"head":** this will print a header, i.e. `[+] ...message...`
+2. **"err":** this will print an error, i.e. `[x] ...message...`
 3. **"block":** this will take an array of strings and format it appropriately, i.e. 
-   1. |__ ...message one...
-   2. |__ ...message two...
-   3. |__ ...message three...
-4. **"":** if the messageType parameter is left out or blank, the default formatting will be applied, i.e. |__ ...message...
+```
+|__ ...message one...
+|__ ...message two...
+|__ ...message three...
+```
+4. **"":** if the messageType parameter is left out or blank, the default formatting will be applied, i.e. `|__ ...message...`
 
 ### return ErrorResult(message)
 If you wish to explicitly exit your utility function on an error, you can return an `ErrorResult()` object so that the correct action is taken by util.js. The constructor of this object should be passed a message.
