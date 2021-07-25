@@ -29,7 +29,7 @@ The util.js UI consists of 7 main components:
 4. **Download Result:** clicking this button will download the results of the last executed utility script as a `.txt` file. 
 5. **Result Panel:** the result of the utility script is dumped here as Unicode text.
 6. **Console Panel:** utilities can print errors and messages here.
-7. **User Input:** the console can receive user input here when activated.
+7. **User Input:** the console can receive user input here when activated by the `promptUser()` function.
 
 ![util.js-ui](https://github.com/sjb-ch1mp/util.js/blob/master/img/readme/ui.png)
 
