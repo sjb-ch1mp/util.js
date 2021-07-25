@@ -38,9 +38,9 @@ In order to add a new utility to util.js, you must add a new Utility object to t
 
 The Utility constructor takes three parameters: 
 
-1. A name for the utility (string),
-2. A description and/or instructions for using the utility (array of strings), and 
-3. A reference to the utility function, or the function itself (function)
+1. **utilityName:** a name for the utility (string),
+2. **utilityDescription:** a description and/or instructions for using the utility (array of strings), and 
+3. **utilityFunction:** a reference to the utility function, or the function itself (function)
 
 For example, the "\[General\] Defang" utility is defined in the following way: 
 ```
@@ -58,8 +58,8 @@ The utility function that is referenced in the Utility object will be executed w
 
 A utility function should return 'results' (of any type) and it should be passed two parameters:
 
-1. A reference to the current file in the file input, and
-2. A reference to the current text in the text input. 
+1. **file:** a reference to the current file in the file input, and
+2. **text:** a reference to the current text in the text input. 
 
 For example, the "\[General\] Defang" utility function (_that is referenced in the Utility object_) is defined in the following way:
 ```
