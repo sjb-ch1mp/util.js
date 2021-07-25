@@ -121,7 +121,7 @@ To do so, call the `processCSV()` function and pass it a reference to the curren
 This function will return a new file object, in which the `file.content` key references an array of objects as described above.
 
 ### PDF Files
-util.js can parse a PDF file and return an object that contains the dictionaries of all of the PDF objects that it contains.
+util.js can parse a PDF file and return an object that contains the dictionaries of all of that documents PDF objects.
 
 For example, using the PDFParser to extract object information from my gas bill returns the following object: 
 
