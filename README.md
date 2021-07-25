@@ -125,7 +125,7 @@ util.js can parse a PDF file and return an object that contains the dictionaries
 
 For example, using the PDFParser to extract object information from my gas bill returns the following object: 
 
-![pdf.png](https://github.com/sjb-ch1mp/util.js/blob/master/img/readme/ui.png)
+![pdf.png](https://github.com/sjb-ch1mp/util.js/blob/master/img/readme/pdf.png)
 
 To do so, create a new `PDFParser` object, passing it a reference to the current file in the file input, and then call the `parse()` function e.g. `file = new PDFParser(file).parse();`.
 
