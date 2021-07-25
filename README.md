@@ -16,8 +16,8 @@ The util.js UI consists of 7 main components:
 
 1. **File Input:** users can upload a file of any kind by pressing here.
 2. **Text Input:** users can enter text input here.
-3. **Utility Panel:** a button is rendered here for each utility script.
-4. **Download Result:** clicking this button will download the results of the last executed utility script as a .txt file. 
+3. **Utility Panel:** a button is rendered here for each utility script. If the user holds the `Alt` key while clicking a utility button, its description and instructions will be printed to the console panel.
+4. **Download Result:** clicking this button will download the results of the last executed utility script as a `.txt` file. 
 5. **Result Panel:** the result of the utility script is dumped here as Unicode text.
 6. **Console Panel:** utilities can print errors and messages here.
 7. **User Input:** the console can receive user input here when activated.
@@ -25,7 +25,7 @@ The util.js UI consists of 7 main components:
 ![util.js-ui](https://github.com/sjb-ch1mp/util.js/blob/master/img/readme/ui.png)
 
 # Adding a Utility
-In order to add a new utility to util.js, you must add a new Utility object to the array in function utilities.js::getUtilities(). util.js will render a utility button for each Utility object included in this array.
+In order to add a new utility to util.js, you must add a new Utility object to the array in function utilities.js::`getUtilities()`. util.js will render a utility button for each Utility object included in this array.
 
 The Utility constructor takes three parameters: 
 
@@ -66,19 +66,90 @@ function defang(file, text){
 }
 ```
 
-**NOTE:** While you're obviously free to make any changes you want, you only need to modify the file 'utilities.js' in order to add Utilities to util.js.
+While you're obviously free to make any changes you want, you only need to modify the file 'utilities.js' in order to add Utilities to util.js.
 
 # Programming Interface
 
 ## File Processing
+util.js provides some functions that you can use to process certain types of files. I intend to add more processing options for different file types over time. The supported file types and the way in which they are processed are listed below. 
+
+Files are stored in util.js as an object with the file name, file type and file content, e.g. 
+```
+file = {
+    "name":"my-csv-file.csv",
+    "type":"application/vnd.ms-excel",
+    "content":<actual-file-content>
+}
+```
 
 ### Text Files
+util.js can process text files by splitting them into new lines.
+
+To do so, call the `processTXT()` function and pass it a reference to the current file in file input, e.g. `processTXT(file)`.
+
+This function will return a new file object, in which the `file.content` key references an array of strings.
+
+In truth, any type of file can be processed this way, but I've found this most useful for text files. 
 
 ### CSV Files
+util.js can process a CSV file by turning each row into an object in which each column is a key. For example, the CSV file...
+
+```
+header_1,header_2,header_3
+1,stuff,things
+2,"more stuff","more things"
+```
+
+...would be transformed into the following array: 
+```
+[
+    {
+        "header_1":"1",
+        "header_2":"stuff",
+        "header_3":"things"
+    },
+    {
+        "header_1":"2",
+        "header_2":"more stuff",
+        "header_3":"more things"
+    }
+]
+```
+
+To do so, call the `processCSV()` function and pass it a reference to the current file in the file input, e.g. `processCSV(file)`.
+
+This function will return a new file object, in which the `file.content` key references an array of objects as described above.
 
 ### PDF Files
+util.js can parse a PDF file and return an object that contains the dictionaries of all of the PDF objects that it contains.
+
+For example, using the PDFParser to extract object information from my gas bill returns the following object: 
+
+![pdf.png](https://github.com/sjb-ch1mp/util.js/blob/master/img/readme/ui.png)
+
+To do so, create a new `PDFParser` object, passing it a reference to the current file in the file input, and then call the `parse()` function e.g. `file = new PDFParser(file).parse();`.
+
+The `PDFParser.parse()` function will return a new file object in which the `file.content` key references a `PDFDocument` object. This object is of the form: 
+
+```
+{
+    "version":<pdf-version>,
+    "objects":{...}
+}
+```
+...where the elements of the `objects` object are of the form: 
+```
+{
+    "id":<pdf-object-id>,
+    "version":<pdf-object-version>,
+    "hasStream":<true|false>, //indication of whether or not this PDF object contains an object stream
+    "dictionary":{...}, //key value pairs from the PDF Object dictionary
+    "references":[...] //list of other PDF objects referenced by this PDF object
+}
+```
 
 ### Clipboard HTML
+When a user copy pastes anything into the Text Input area, if the clipboard contains HTML, this is stored in the global `RICH_TEXT` parameter, if you wish to use this instead of the plain text.
 
 ## User Input
 

@@ -49,15 +49,20 @@ function loadFile(event){
 */
 
 function processTXT(file){
+    if(file.processed){
+        return file;
+    }
     consoleLog("Processing file \"" + file.name + "\" as TEXT.", "");
-    let lines = content.split(/\r?\n/);
+    let lines = file.content.split(/\r?\n/);
     let cleanLines = [];
     for(let i in lines){
         if(lines[i].trim().length > 0){
             cleanLines.push(lines[i].trim());
         }
     }
-    return cleanLines;
+    file.content = cleanLines;
+    file.processed = true;
+    return file;
 }
 
 /*
@@ -65,6 +70,9 @@ function processTXT(file){
 */
 
 function processCSV(file){
+    if(file.processed){
+        return file;
+    }
     if(FILE.type === "text/csv" || (FILE.type === "application/vnd.ms-excel" && FILE.name.endsWith(".csv"))){
         consoleLog("Processing file \"" + file.name + "\" as CSV.", "");
         try{
@@ -77,6 +85,7 @@ function processCSV(file){
                 }
             }
             file.content = entities;
+            file.processed = true;
             return file;
         }catch(err){
             consoleLog("Error parsing CSV file.", "err");
@@ -141,6 +150,10 @@ class PDFParser{
     }
 
     parse(){
+        if(this.file.processed){
+            return this.file;
+        }
+        
         if(this.file.type !== "application/pdf"){
             consoleLog("File \"" + this.file.name + "\" does not appear to be a PDF! PDFParser is unable to parse file type \"" + this.file.type + "\". Aborting.", "err");
             return this.file;
@@ -175,7 +188,9 @@ class PDFParser{
             }
         }
 
-        return pdf;
+        this.file.content = pdf;
+        this.file.processed = true;
+        return this.file;
     }
 
     parsePDFObject(id, version){
